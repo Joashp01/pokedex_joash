@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "530976358420",
+    "project_id": "pokedex-joash",
+    "storage_bucket": "pokedex-joash.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530976358420:android:bb871b7578fbadb2df2701",
+        "android_client_info": {
+          "package_name": "com.example.pokedex_joash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAuYc4kjPJBIKOnoHG2VhR6ZHEEI_mNr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
