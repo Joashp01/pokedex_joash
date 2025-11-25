@@ -2,7 +2,6 @@ import 'package:pokedex_joash/views/authenticate/register.dart';
 import 'package:pokedex_joash/views/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
 
-
 class Authenticate extends StatefulWidget {
   const Authenticate({super.key});
 
@@ -12,11 +11,11 @@ class Authenticate extends StatefulWidget {
 
 class _AuthenticateState extends State<Authenticate> {
 
-  bool showSignIn = true; // true is the sign in screen , false Register screem
+  bool showSignIn = true;
 
-void toogleView(){// flips between sign in and Register 
-  setState(() => showSignIn =!showSignIn);
-}
+  void toogleView(){
+    setState(() => showSignIn = !showSignIn);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +24,6 @@ void toogleView(){// flips between sign in and Register
       return SignIn(toggleView: toogleView);
     }else{
       return Register(toggleView: toogleView);
-      
     }
-    
   }
 }

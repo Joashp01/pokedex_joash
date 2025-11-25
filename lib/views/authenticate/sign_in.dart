@@ -38,7 +38,6 @@ class _SignInState extends State<SignIn> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Pokeball Icon
                   Container(
                     width: 120,
                     height: 120,
@@ -61,7 +60,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Welcome Text
                   const Text(
                     'Welcome Back',
                     style: TextStyle(
@@ -80,7 +78,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Form Card
                   Container(
                     padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -98,7 +95,6 @@ class _SignInState extends State<SignIn> {
                       key: _formkey,
                       child: Column(
                         children: [
-                          // Email Field
                           TextFormField(
                             decoration: textInputDecoration.copyWith(
                               hintText: 'Email',
@@ -113,7 +109,6 @@ class _SignInState extends State<SignIn> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Password Field
                           TextFormField(
                             decoration: textInputDecoration.copyWith(
                               hintText: 'Password',
@@ -142,7 +137,6 @@ class _SignInState extends State<SignIn> {
                           ),
                           const SizedBox(height: 25),
 
-                          // Sign In Button
                           SizedBox(
                             width: double.infinity,
                             height: 55,
@@ -191,7 +185,6 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
 
-                          // Error Message
                           if (error.isNotEmpty) ...[
                             const SizedBox(height: 15),
                             Container(
@@ -224,7 +217,6 @@ class _SignInState extends State<SignIn> {
                   ),
                   const SizedBox(height: 25),
 
-                  // Register Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

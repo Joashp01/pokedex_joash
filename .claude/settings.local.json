@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python remove_comments.py:*)",
+      "Bash(pwsh -Command:*)",
+      "Bash(timeout /t 2)",
+      "Bash(powershell -Command \"Get-Content ''lib\\controllers\\pokemon_controller.dart'' | Select-Object -First 10\")",
+      "Bash(copy:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

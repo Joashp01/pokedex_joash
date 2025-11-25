@@ -38,7 +38,6 @@ class _RegisterState extends State<Register> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Pokeball Icon
                   Container(
                     width: 120,
                     height: 120,
@@ -61,7 +60,6 @@ class _RegisterState extends State<Register> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Welcome Text
                   const Text(
                     'Join Us!',
                     style: TextStyle(
@@ -80,7 +78,6 @@ class _RegisterState extends State<Register> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Form Card
                   Container(
                     padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -98,7 +95,6 @@ class _RegisterState extends State<Register> {
                       key: _formkey,
                       child: Column(
                         children: [
-                          // Email Field
                           TextFormField(
                             decoration: textInputDecoration.copyWith(
                               hintText: 'Email',
@@ -113,7 +109,6 @@ class _RegisterState extends State<Register> {
                           ),
                           const SizedBox(height: 20),
 
-                          // Password Field
                           TextFormField(
                             decoration: textInputDecoration.copyWith(
                               hintText: 'Password',
@@ -142,18 +137,17 @@ class _RegisterState extends State<Register> {
                           ),
                           const SizedBox(height: 25),
 
-                          // Register Button
                           SizedBox(
                             width: double.infinity,
                             height: 55,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: pokeBlue,
+                                backgroundColor: Colors.blue,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
-                                elevation: 5,
+                                elevation: 5
                               ),
                               onPressed: _isLoading
                                   ? null
@@ -190,7 +184,6 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
 
-                          // Error Message
                           if (error.isNotEmpty) ...[
                             const SizedBox(height: 15),
                             Container(
@@ -223,7 +216,6 @@ class _RegisterState extends State<Register> {
                   ),
                   const SizedBox(height: 25),
 
-                  // Sign In Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
