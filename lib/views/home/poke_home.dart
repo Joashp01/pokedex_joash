@@ -5,6 +5,7 @@ import '../../models/pokemon.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/pokemon_sound.dart';
 import '../../services/auth.dart';
+import '../../shared/constants.dart';
 import 'poke_details.dart';
 
 class PokemonListView extends StatefulWidget {
@@ -21,6 +22,8 @@ class _PokemonListViewState extends State<PokemonListView> {
 
   final AudioService _audioService = AudioService();
 
+  late AudioService _globalAudioService;
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +32,7 @@ class _PokemonListViewState extends State<PokemonListView> {
 
     Future.microtask(() {
       if (mounted) {
+        _globalAudioService = context.read<AudioService>();
         context.read<PokemonController>().fetchPokemonList();
       }
     });
@@ -86,6 +90,87 @@ class _PokemonListViewState extends State<PokemonListView> {
           ),
         ),
         actions: [
+          Consumer<AudioService>(
+            builder: (context, audioService, child) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: audioService.isMusicPlaying
+                      ? (isDark
+                          ? const Color(0xFFFFCB05).withValues(alpha: 0.3)
+                          : Colors.yellow.withValues(alpha: 0.3))
+                      : (isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.white.withValues(alpha: 0.2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      spreadRadius: -2,
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    audioService.isMusicPlaying
+                        ? Icons.music_note
+                        : Icons.music_off,
+                    size: 22,
+                  ),
+                  tooltip: audioService.isMusicPlaying
+                      ? 'Pause theme song'
+                      : 'Play theme song',
+                  onPressed: () {
+                    if (audioService.isMusicPlaying) {
+                      audioService.pauseThemeSong();
+                    } else {
+                      audioService.resumeThemeSong();
+                    }
+                    setState(() {});
+                  },
+                ),
+              );
+            },
+          ),
+          Consumer<PokemonController>(
+            builder: (context, controller, child) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: controller.showingFavoritesOnly
+                      ? (isDark
+                          ? const Color(0xFFFF6B6B).withValues(alpha: 0.3)
+                          : Colors.white.withValues(alpha: 0.4))
+                      : (isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.white.withValues(alpha: 0.2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      spreadRadius: -2,
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    controller.showingFavoritesOnly
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    size: 22,
+                  ),
+                  tooltip: controller.showingFavoritesOnly
+                      ? 'Show all Pokemon'
+                      : 'Show favorites only',
+                  onPressed: () {
+                    controller.toggleFavoritesFilter();
+                  },
+                ),
+              );
+            },
+          ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
@@ -417,7 +502,7 @@ class _PokemonListViewState extends State<PokemonListView> {
     final artworkUrl =
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png';
 
-    final cardColor = _getPokemonColor(pokemon.id, isDark);
+    final cardColor = _getPokemonColor(pokemon, isDark);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
@@ -557,24 +642,19 @@ class _PokemonListViewState extends State<PokemonListView> {
     );
   }
 
-  Color _getPokemonColor(int id, bool isDark) {
-    final colors = [
-      const Color(0xFF5FD89D),
-      const Color(0xFFFF6B6B),
-      const Color(0xFF4FC3F7),
-      const Color(0xFFA4DD57),
-      const Color(0xFFBA68C8),
-      const Color(0xFFFFB74D),
-      const Color(0xFFF06292),
-      const Color(0xFFEF5350),
-      const Color(0xFF9575CD),
-      const Color(0xFF7E57C2),
-    ];
-    return colors[id % colors.length];
+  Color _getPokemonColor(PokemonListItem pokemon, bool isDark) {
+    
+    if (pokemon.types.isNotEmpty) {
+      final primaryType = pokemon.types.first.toLowerCase();
+      return pokemonTypeColors[primaryType] ?? const Color(0xFFA8A878);
+    }
+
+    
+    return const Color(0xFFA8A878);
   }
 
   void _onPokemonTap(PokemonListItem pokemon) {
-    _audioService.playPokemonCry(pokemon.id);
+    _audioService.playPokemonSound(pokemon.id);
 
     Navigator.push(
       context,
