@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Pokemon-themed colors
 const Color pokeRed = Color(0xFFE3350D);
 const Color pokeRedDark = Color(0xFFCC0000);
 const Color pokeBlue = Color(0xFF3B5CA8);

@@ -1,7 +1,7 @@
-class User { 
+class User {
+ 
+  final String uid;
 
-final String uid;
-
-User({required this.uid});
-
+  
+  User({required this.uid});
 }

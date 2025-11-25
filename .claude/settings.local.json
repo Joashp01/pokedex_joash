@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python remove_comments.py:*)",
+      "Bash(pwsh -Command:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
