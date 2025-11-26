@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // 👈 for kIsWeb
 import 'package:pokedex_joash/services/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:pokedex_joash/views/wrapper.dart';
@@ -12,10 +13,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp();
-    print('Firebase initialized successfully ');
+    if (kIsWeb) {
+      // ✅ Web initialization with FirebaseOptions
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyDOKhFnqs0BwCTkr_24XkvpH_fBgoawiXU",
+          authDomain: "pokedex-joash.firebaseapp.com",
+          projectId: "pokedex-joash",
+          storageBucket: "pokedex-joash.firebasestorage.app",
+          messagingSenderId: "530976358420",
+          appId: "1:530976358420:web:8bd85adbc19ca718df2701",
+        ),
+      );
+      print('Firebase initialized for Web');
+    } else {
+      // ✅ Mobile/Desktop initialization (uses google-services.json / plist)
+      await Firebase.initializeApp();
+      print('Firebase initialized for Mobile/Desktop');
+    }
   } catch (e) {
-    print(' Firebase initialized error : $e');
+    print('Firebase initialization error: $e');
   }
 
   runApp(const MyApp());
@@ -34,7 +51,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Start playing theme song when app starts
     Future.delayed(const Duration(milliseconds: 500), () {
       _audioService.playThemeSong();
     });
@@ -52,32 +68,24 @@ class _MyAppState extends State<MyApp> {
       providers: [
         StreamProvider<User?>.value(
           value: AuthService().user,
-
           initialData: null,
-
           catchError: (context, error) {
-            print('StreamProvider error : $error');
+            print('StreamProvider error: $error');
             return null;
           },
         ),
-
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-
         ChangeNotifierProvider(create: (_) => PokemonController()),
-
         Provider<AudioService>.value(value: _audioService),
       ],
-
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(
             title: 'Pokédex',
             debugShowCheckedModeBanner: false,
-
             themeMode: themeProvider.themeMode,
             theme: ThemeProvider.lightTheme,
             darkTheme: ThemeProvider.darkTheme,
-
             home: Wrapper(),
           );
         },
