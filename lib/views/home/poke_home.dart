@@ -22,17 +22,15 @@ class _PokemonListViewState extends State<PokemonListView> {
 
   final AudioService _audioService = AudioService();
 
-  late AudioService _globalAudioService;
 
   @override
-  void initState() {
+  void initState() { 
     super.initState();
 
     _scrollController.addListener(_onScroll);
 
     Future.microtask(() {
       if (mounted) {
-        _globalAudioService = context.read<AudioService>();
         context.read<PokemonController>().fetchPokemonList();
       }
     });

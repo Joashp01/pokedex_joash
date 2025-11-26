@@ -20,9 +20,9 @@ class AudioService {
 
   Future<void> playThemeSong() async {
     try {
-      // Using a reliable Pokemon theme song URL
+      
       const themeSongUrl =
-          'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+          'https://dn710602.ca.archive.org/0/items/pokemon-theme-song-collection/Poke%CC%81mon%20English%20Theme%20Song%20Collection/01%20-%20Poke%CC%81mon%20Theme.mp3';
 
       await _backgroundMusicPlayer.setReleaseMode(ReleaseMode.loop);
       await _backgroundMusicPlayer.setVolume(0.3);
