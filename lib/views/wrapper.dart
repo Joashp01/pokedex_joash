@@ -16,9 +16,13 @@ class Wrapper extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       pokemonController.setUser(user);
+      pokemonController.initializeConnectivity();
+      if (user != null) {
+        pokemonController.loadUserData();
+      }
     });
 
-    print(user);
+    debugPrint(user?.toString());
 
     if (user == null) {
       return const Authenticate();

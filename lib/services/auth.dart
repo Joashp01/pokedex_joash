@@ -1,4 +1,5 @@
 import 'package:pokedex_joash/models/user.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -22,7 +23,7 @@ class AuthService{
         return newUser;
       }
     } catch (e) {
-      print('Error loading user data: $e');
+      debugPrint('Error loading user data: $e');
       return User(uid: user.uid);
     }
   }
@@ -40,30 +41,30 @@ class AuthService{
 
       return _userFromFirebaseUser(user);
     }catch(e){
-      print('Error signing in : $e');
+      debugPrint('Error signing in : $e');
       return null;
     }
   }
 
   Future<User?> registerWithEmailAndPassword(String email, String password) async {
     try{
-      print(' Pokedex registration strating ');
+      debugPrint('Pokedex registration starting');
 
       fb.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
 
       fb.User? user = result.user;
 
       if (user == null){
-        print('User is null after registration ');
+        debugPrint('User is null after registration');
         return null;
       }
 
-      print ('Pokedex user created with uid: ${user.uid}');
+      debugPrint('Pokedex user created with uid: ${user.uid}');
 
       return _userFromFirebaseUser(user);
 
     }catch(e){
-      print('Error registering : $e');
+      debugPrint('Error registering : $e');
       return null;
     }
   }
@@ -72,7 +73,7 @@ class AuthService{
     try{
       return await _auth.signOut();
     }catch(e){
-      print('Error signing out : $e');
+      debugPrint('Error signing out : $e');
     }
   }
 
@@ -87,7 +88,7 @@ class AuthService{
 
       return true;
     } catch (e) {
-      print('Error adding favorite: $e');
+      debugPrint('Error adding favorite: $e');
       return false;
     }
   }
@@ -103,7 +104,7 @@ class AuthService{
 
       return true;
     } catch (e) {
-      print('Error removing favorite: $e');
+      debugPrint('Error removing favorite: $e');
       return false;
     }
   }
@@ -128,7 +129,7 @@ class AuthService{
 
       return User(uid: user.uid);
     } catch (e) {
-      print('Error getting user data: $e');
+      debugPrint('Error getting user data: $e');
       return null;
     }
   }

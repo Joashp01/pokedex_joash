@@ -74,13 +74,35 @@ Future<PaginatedPokemonResponse> fetchPokemonList({
 
 }
 
-List<PokemonListItem>? _allPokemons;
+Future<List<PokemonListItem>> searchPokemon(String query, {int limit = 20}) async {
+  final lowerQuery = query.toLowerCase().trim();
 
-Future<List<PokemonListItem>> searchPokemon(String query, {int limit = 20})
-async{
+  if (lowerQuery.isEmpty) {
+    return [];
+  }
+
+  try {
+    final url = Uri.parse('$baseUrl/pokemon/$lowerQuery');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final types = (data['types'] as List)
+          .map((typeData) => typeData['type']['name'] as String)
+          .toList();
+
+      return [
+        PokemonListItem(
+          name: data['name'],
+          url: '$baseUrl/pokemon/${data['id']}/',
+          types: types,
+        )
+      ];
+    }
+  } catch (_) {
+  }
+
   _allPokemons ??= await _fetchAllPokemons();
-
-  final lowerQuery = query.toLowerCase();
 
   final filtered = _allPokemons!
       .where((pokemon) => pokemon.name.toLowerCase().contains(lowerQuery))
@@ -89,6 +111,8 @@ async{
 
   return filtered;
 }
+
+List<PokemonListItem>? _allPokemons;
 
 Future<List<PokemonListItem>> _fetchAllPokemons() async {
   final url = Uri.parse('$baseUrl/pokemon?limit=2000&offset=0');

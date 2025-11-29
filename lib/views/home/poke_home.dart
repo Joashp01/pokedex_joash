@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/pokemon_controller.dart';
-import '../../models/pokemon.dart';
-import '../../providers/theme_provider.dart';
-import '../../services/pokemon_sound.dart';
-import '../../services/auth.dart';
-import '../../shared/constants.dart';
+import 'package:pokedex_joash/controllers/pokemon_controller.dart';
+import 'package:pokedex_joash/models/pokemon.dart';
+import 'package:pokedex_joash/providers/theme_provider.dart';
+import 'package:pokedex_joash/services/pokemon_sound.dart';
+import 'package:pokedex_joash/services/auth.dart';
+import 'package:pokedex_joash/widgets/pokemon_search_bar.dart';
+import 'package:pokedex_joash/widgets/pokemon_list_card.dart';
 import 'poke_details.dart';
 
 class PokemonListView extends StatefulWidget {
@@ -22,9 +23,8 @@ class _PokemonListViewState extends State<PokemonListView> {
 
   final AudioService _audioService = AudioService();
 
-
   @override
-  void initState() { 
+  void initState() {
     super.initState();
 
     _scrollController.addListener(_onScroll);
@@ -55,6 +55,8 @@ class _PokemonListViewState extends State<PokemonListView> {
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
     final isDark = themeProvider.isDarkMode;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxWidth = screenWidth > 1200 ? 1200.0 : screenWidth;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -243,140 +245,66 @@ class _PokemonListViewState extends State<PokemonListView> {
           ),
         ),
 
-        child: Consumer<PokemonController>(
-          builder: (context, controller, child) {
-            return Column(
-              children: [
-                const SizedBox(height: 100),
-                _buildSearchBar(controller, isDark),
-                Expanded(child: _buildBody(controller, isDark)),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(PokemonController controller, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    const Color(0xFF2A2A3E).withValues(alpha: 0.8),
-                    const Color(0xFF1E1E2E).withValues(alpha: 0.8),
-                  ]
-                : [
-                    Colors.white.withValues(alpha: 0.95),
-                    Colors.grey[50]!.withValues(alpha: 0.95),
-                  ],
-          ),
-          border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.white.withValues(alpha: 0.8),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.4)
-                  : Colors.black.withValues(alpha: 0.08),
-              blurRadius: 24,
-              offset: const Offset(0, 6),
-              spreadRadius: -4,
-            ),
-            BoxShadow(
-              color: isDark
-                  ? Colors.purple.withValues(alpha: 0.1)
-                  : Colors.red.withValues(alpha: 0.05),
-              blurRadius: 16,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: TextField(
-          controller: _searchController,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-          decoration: InputDecoration(
-            hintText: 'Search Pokémon...',
-            hintStyle: TextStyle(
-              color: isDark ? Colors.grey[500] : Colors.grey[500],
-              fontWeight: FontWeight.w400,
-            ),
-            prefixIcon: Container(
-              margin: const EdgeInsets.all(12),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [
-                          const Color(0xFFFF6B6B).withValues(alpha: 0.2),
-                          const Color(0xFFE63946).withValues(alpha: 0.1),
-                        ]
-                      : [
-                          const Color(0xFFE63946).withValues(alpha: 0.15),
-                          const Color(0xFFE63946).withValues(alpha: 0.08),
-                        ],
-                ),
-              ),
-              child: Icon(
-                Icons.search_rounded,
-                color: isDark
-                    ? const Color(0xFFFF6B6B)
-                    : const Color(0xFFE63946),
-                size: 20,
-              ),
-            ),
-            suffixIcon: controller.isSearching
-                ? Container(
-                    margin: const EdgeInsets.all(8),
-                    child: IconButton(
-                      icon: Container(
-                        padding: const EdgeInsets.all(6),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: Consumer<PokemonController>(
+              builder: (context, controller, child) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 100),
+                    if (controller.isOffline)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
                           color: isDark
-                              ? Colors.grey[800]
-                              : Colors.grey[200],
+                              ? Colors.orange.shade900.withValues(alpha: 0.3)
+                              : Colors.orange.shade100,
+                          border: Border.all(
+                            color: isDark ? Colors.orange.shade700 : Colors.orange.shade300,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(
-                          Icons.close_rounded,
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          size: 18,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.wifi_off_rounded,
+                              color: isDark ? Colors.orange.shade300 : Colors.orange.shade900,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Offline Mode - Showing favorites only',
+                                style: TextStyle(
+                                  color: isDark ? Colors.orange.shade200 : Colors.orange.shade900,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      onPressed: () {
+                    PokemonSearchBar(
+                      controller: _searchController,
+                      isDark: isDark,
+                      isSearching: controller.isSearching,
+                      onChanged: (query) => controller.searchPokemon(query),
+                      onClear: () {
                         _searchController.clear();
                         controller.clearSearch();
                       },
                     ),
-                  )
-                : null,
-            filled: false,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
+                    Expanded(child: _buildBody(controller, isDark)),
+                  ],
+                );
+              },
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           ),
-          onChanged: (query) {
-            controller.searchPokemon(query);
-          },
         ),
       ),
     );
@@ -491,164 +419,13 @@ class _PokemonListViewState extends State<PokemonListView> {
         }
 
         final pokemon = displayList[index];
-        return _buildPokemonCard(pokemon, isDark);
+        return PokemonListCard(
+          pokemon: pokemon,
+          isDark: isDark,
+          onTap: () => _onPokemonTap(pokemon),
+        );
       },
     );
-  }
-
-  Widget _buildPokemonCard(PokemonListItem pokemon, bool isDark) {
-    final artworkUrl =
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png';
-
-    final cardColor = _getPokemonColor(pokemon, isDark);
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-      height: 120,
-
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  cardColor.withValues(alpha: 0.15),
-                  cardColor.withValues(alpha: 0.05),
-                ]
-              : [
-                  cardColor.withValues(alpha: 0.08),
-                  cardColor.withValues(alpha: 0.02),
-                ],
-        ),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.white.withValues(alpha: 0.6),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: cardColor.withValues(alpha: isDark ? 0.2 : 0.12),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-            spreadRadius: -4,
-          ),
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.4)
-                : Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _onPokemonTap(pokemon),
-          borderRadius: BorderRadius.circular(24),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Hero(
-                  tag: 'pokemon-${pokemon.id}',
-                  child: Container(
-                    width: 88,
-                    height: 88,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          cardColor.withValues(alpha: isDark ? 0.3 : 0.15),
-                          cardColor.withValues(alpha: 0.05),
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: cardColor.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          spreadRadius: -2,
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: Image.network(
-                      artworkUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                        Icons.catching_pokemon,
-                        size: 48,
-                        color: cardColor.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 20),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '#${pokemon.id.toString().padLeft(3, '0')}',
-                        style: TextStyle(
-                          color: isDark
-                              ? Colors.grey[500]
-                              : Colors.grey[600],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
-                          color: isDark ? Colors.white : Colors.black87,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: cardColor.withValues(alpha: isDark ? 0.2 : 0.1),
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward_rounded,
-                    color: cardColor,
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _getPokemonColor(PokemonListItem pokemon, bool isDark) {
-    
-    if (pokemon.types.isNotEmpty) {
-      final primaryType = pokemon.types.first.toLowerCase();
-      return pokemonTypeColors[primaryType] ?? const Color(0xFFA8A878);
-    }
-
-    
-    return const Color(0xFFA8A878);
   }
 
   void _onPokemonTap(PokemonListItem pokemon) {

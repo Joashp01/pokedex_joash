@@ -22,6 +22,9 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxWidth = screenWidth > 600 ? 600.0 : screenWidth;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -33,9 +36,11 @@ class _SignInState extends State<SignIn> {
         ),
         child: SafeArea(
           child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Column(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
@@ -46,7 +51,7 @@ class _SignInState extends State<SignIn> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withAlpha(51),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -73,7 +78,7 @@ class _SignInState extends State<SignIn> {
                     'Sign in to continue your journey',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withAlpha(229),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -85,7 +90,7 @@ class _SignInState extends State<SignIn> {
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withAlpha(26),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -223,7 +228,7 @@ class _SignInState extends State<SignIn> {
                       Text(
                         "Don't have an account? ",
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withAlpha(229),
                           fontSize: 15,
                         ),
                       ),
@@ -248,6 +253,7 @@ class _SignInState extends State<SignIn> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

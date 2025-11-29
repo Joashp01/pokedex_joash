@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/pokemon.dart';
 import '../models/user.dart';
 import '../services/api_service.dart';
 import '../services/auth.dart';
+import '../services/local_storage.dart';
 
 
 class PokemonController extends ChangeNotifier {
@@ -11,6 +13,12 @@ class PokemonController extends ChangeNotifier {
   final ApiService _apiService = ApiService();
 
   final AuthService _authService = AuthService();
+
+  final LocalStorageService _localStorage = LocalStorageService();
+
+  final Connectivity _connectivity = Connectivity();
+
+  bool _isOffline = false;
 
   User? _currentUser;
 
@@ -39,6 +47,8 @@ class PokemonController extends ChangeNotifier {
 
   bool _showingFavoritesOnly = false;
 
+  List<PokemonListItem> _favoritedPokemonCache = [];
+
   List<PokemonListItem> get pokemonList => _pokemonList;
 
   Pokemon? get selectedPokemon => _selectedPokemon;
@@ -61,13 +71,25 @@ class PokemonController extends ChangeNotifier {
 
   User? get currentUser => _currentUser;
 
+  bool get isOffline => _isOffline;
+
   List<PokemonListItem> get displayList {
     if (_isSearching) return _searchResults;
     if (_showingFavoritesOnly && _currentUser != null) {
-      return _pokemonList
-          .where((pokemon) =>
-              _currentUser!.favoritePokemonIds.contains(pokemon.id))
+      final favoritedIds = _currentUser!.favoritePokemonIds;
+      final loadedFavorites = _pokemonList
+          .where((pokemon) => favoritedIds.contains(pokemon.id))
           .toList();
+
+      final allFavorites = <int, PokemonListItem>{};
+      for (var pokemon in _favoritedPokemonCache) {
+        allFavorites[pokemon.id] = pokemon;
+      }
+      for (var pokemon in loadedFavorites) {
+        allFavorites[pokemon.id] = pokemon;
+      }
+
+      return allFavorites.values.toList();
     }
     return _pokemonList;
   }
@@ -76,9 +98,98 @@ class PokemonController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> initializeConnectivity() async {
+    await _checkConnectivity();
+
+    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
+      _checkConnectivity();
+    });
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResults = await _connectivity.checkConnectivity();
+    final wasOffline = _isOffline;
+    _isOffline = connectivityResults.contains(ConnectivityResult.none);
+
+    if (wasOffline && !_isOffline && _pokemonList.isEmpty) {
+      await fetchPokemonList();
+    }
+
+    notifyListeners();
+  }
+
   Future<void> loadUserData() async {
     _currentUser = await _authService.getCurrentUserData();
+
+    if (_currentUser != null && _currentUser!.favoritePokemonIds.isNotEmpty) {
+      if (_isOffline) {
+        await _loadFavoritedPokemonFromCache();
+      } else {
+        await _loadFavoritedPokemon();
+      }
+    }
+
     notifyListeners();
+  }
+
+  Future<void> _loadFavoritedPokemonFromCache() async {
+    final cached = await _localStorage.getFavoritedPokemon();
+    _favoritedPokemonCache = cached;
+  }
+
+  Future<void> _loadFavoritedPokemon() async {
+    if (_currentUser == null) return;
+
+    final favoritedIds = _currentUser!.favoritePokemonIds;
+    final loadedIds = _pokemonList.map((p) => p.id).toSet();
+
+    final unloadedFavorites = favoritedIds.where((id) => !loadedIds.contains(id)).toList();
+
+    if (unloadedFavorites.isEmpty) return;
+
+    _favoritedPokemonCache = [];
+
+    for (final pokemonId in unloadedFavorites) {
+      try {
+        final data = await _apiService.fetchPokemonDetailsRaw(pokemonId);
+        final types = (data['types'] as List)
+            .map((typeData) => typeData['type']['name'] as String)
+            .toList();
+
+        final pokemonItem = PokemonListItem(
+          name: data['name'],
+          url: 'https://pokeapi.co/api/v2/pokemon/$pokemonId/',
+          types: types,
+        );
+
+        _favoritedPokemonCache.add(pokemonItem);
+      } catch (e) {
+        continue;
+      }
+    }
+
+    await _saveFavoritedPokemonToCache();
+  }
+
+  Future<void> _saveFavoritedPokemonToCache() async {
+    if (_currentUser == null) return;
+
+    final favoritedIds = _currentUser!.favoritePokemonIds;
+    final allFavorites = <int, PokemonListItem>{};
+
+    for (var pokemon in _favoritedPokemonCache) {
+      if (favoritedIds.contains(pokemon.id)) {
+        allFavorites[pokemon.id] = pokemon;
+      }
+    }
+
+    for (var pokemon in _pokemonList) {
+      if (favoritedIds.contains(pokemon.id)) {
+        allFavorites[pokemon.id] = pokemon;
+      }
+    }
+
+    await _localStorage.saveFavoritedPokemon(allFavorites.values.toList());
   }
 
   bool isFavorite(int pokemonId) {
@@ -94,6 +205,7 @@ class PokemonController extends ChangeNotifier {
 
     if (success) {
       await loadUserData();
+      await _saveFavoritedPokemonToCache();
     }
 
     return success;
@@ -105,6 +217,13 @@ class PokemonController extends ChangeNotifier {
   }
 
   Future<void> fetchPokemonList() async {
+    if (_isOffline) {
+      _error = 'No internet connection. Showing favorites only.';
+      _isLoading = false;
+      _showingFavoritesOnly = true;
+      notifyListeners();
+      return;
+    }
 
     _isLoading = true;
     _error = null;

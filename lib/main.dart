@@ -25,14 +25,14 @@ void main() async {
           appId: "1:530976358420:web:8bd85adbc19ca718df2701",
         ),
       );
-      print('Firebase initialized for Web');
+      debugPrint('Firebase initialized for Web');
     } else {
       // ✅ Mobile/Desktop initialization (uses google-services.json / plist)
       await Firebase.initializeApp();
-      print('Firebase initialized for Mobile/Desktop');
+      debugPrint('Firebase initialized for Mobile/Desktop');
     }
   } catch (e) {
-    print('Firebase initialization error: $e');
+    debugPrint('Firebase initialization error: $e');
   }
 
   runApp(const MyApp());
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
           value: AuthService().user,
           initialData: null,
           catchError: (context, error) {
-            print('StreamProvider error: $error');
+            debugPrint('StreamProvider error: $error');
             return null;
           },
         ),

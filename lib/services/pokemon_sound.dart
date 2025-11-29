@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 
 class AudioService {
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -14,7 +15,7 @@ class AudioService {
 
       await _audioPlayer.play(UrlSource(soundUrl));
     } catch (e) {
-      print('Error playing Pokemon sound: $e');
+      debugPrint('Error playing Pokemon sound: $e');
     }
   }
 
@@ -29,7 +30,7 @@ class AudioService {
       await _backgroundMusicPlayer.play(UrlSource(themeSongUrl));
       _isMusicPlaying = true;
     } catch (e) {
-      print('Error playing theme song: $e');
+      debugPrint('Error playing theme song: $e');
     }
   }
 
