@@ -98,11 +98,11 @@ class _PokemonListViewState extends State<PokemonListView> {
                   shape: BoxShape.circle,
                   color: audioService.isMusicPlaying
                       ? (isDark
-                          ? const Color(0xFFFFCB05).withValues(alpha: 0.3)
-                          : Colors.yellow.withValues(alpha: 0.3))
+                            ? const Color(0xFFFFCB05).withValues(alpha: 0.3)
+                            : Colors.yellow.withValues(alpha: 0.3))
                       : (isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.white.withValues(alpha: 0.2)),
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.white.withValues(alpha: 0.2)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
@@ -141,11 +141,11 @@ class _PokemonListViewState extends State<PokemonListView> {
                   shape: BoxShape.circle,
                   color: controller.showingFavoritesOnly
                       ? (isDark
-                          ? const Color(0xFFFF6B6B).withValues(alpha: 0.3)
-                          : Colors.white.withValues(alpha: 0.4))
+                            ? const Color(0xFFFF6B6B).withValues(alpha: 0.3)
+                            : Colors.white.withValues(alpha: 0.4))
                       : (isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.white.withValues(alpha: 0.2)),
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.white.withValues(alpha: 0.2)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
@@ -213,10 +213,7 @@ class _PokemonListViewState extends State<PokemonListView> {
               ],
             ),
             child: IconButton(
-              icon: const Icon(
-                Icons.logout_rounded,
-                size: 22,
-              ),
+              icon: const Icon(Icons.logout_rounded, size: 22),
               tooltip: 'Logout',
               onPressed: () async {
                 final AuthService auth = AuthService();
@@ -234,14 +231,8 @@ class _PokemonListViewState extends State<PokemonListView> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDark
-                ? [
-                    const Color(0xFF1E1E2E),
-                    const Color(0xFF121212),
-                  ]
-                : [
-                    const Color(0xFFF8F9FA),
-                    const Color(0xFFE8EAED),
-                  ],
+                ? [const Color(0xFF1E1E2E), const Color(0xFF121212)]
+                : [const Color(0xFFF8F9FA), const Color(0xFFE8EAED)],
           ),
         ),
 
@@ -256,14 +247,22 @@ class _PokemonListViewState extends State<PokemonListView> {
                     if (controller.isOffline)
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.orange.shade900.withValues(alpha: 0.3)
                               : Colors.orange.shade100,
                           border: Border.all(
-                            color: isDark ? Colors.orange.shade700 : Colors.orange.shade300,
+                            color: isDark
+                                ? Colors.orange.shade700
+                                : Colors.orange.shade300,
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(12),
@@ -272,7 +271,9 @@ class _PokemonListViewState extends State<PokemonListView> {
                           children: [
                             Icon(
                               Icons.wifi_off_rounded,
-                              color: isDark ? Colors.orange.shade300 : Colors.orange.shade900,
+                              color: isDark
+                                  ? Colors.orange.shade300
+                                  : Colors.orange.shade900,
                               size: 20,
                             ),
                             const SizedBox(width: 12),
@@ -280,7 +281,9 @@ class _PokemonListViewState extends State<PokemonListView> {
                               child: Text(
                                 'Offline Mode - Showing favorites only',
                                 style: TextStyle(
-                                  color: isDark ? Colors.orange.shade200 : Colors.orange.shade900,
+                                  color: isDark
+                                      ? Colors.orange.shade200
+                                      : Colors.orange.shade900,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -368,7 +371,9 @@ class _PokemonListViewState extends State<PokemonListView> {
       );
     }
 
-    if (controller.isSearching && displayList.isEmpty && !controller.isLoading) {
+    if (controller.isSearching &&
+        displayList.isEmpty &&
+        !controller.isLoading) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -412,7 +417,9 @@ class _PokemonListViewState extends State<PokemonListView> {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: CircularProgressIndicator(
-                color: isDark ? const Color(0xFFFF6B6B) : const Color(0xFFE63946),
+                color: isDark
+                    ? const Color(0xFFFF6B6B)
+                    : const Color(0xFFE63946),
               ),
             ),
           );
@@ -442,15 +449,13 @@ class _PokemonListViewState extends State<PokemonListView> {
           const end = Offset.zero;
           const curve = Curves.easeInOutCubic;
 
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
 
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
+          return SlideTransition(position: offsetAnimation, child: child);
         },
 
         transitionDuration: const Duration(milliseconds: 400),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/pokemon.dart';
@@ -7,9 +6,7 @@ import '../services/api_service.dart';
 import '../services/auth.dart';
 import '../services/local_storage.dart';
 
-
 class PokemonController extends ChangeNotifier {
-
   final ApiService _apiService = ApiService();
 
   final AuthService _authService = AuthService();
@@ -29,7 +26,6 @@ class PokemonController extends ChangeNotifier {
   bool _isLoading = false;
 
   String? _error;
-
 
   int _currentOffset = 0;
 
@@ -93,6 +89,7 @@ class PokemonController extends ChangeNotifier {
     }
     return _pokemonList;
   }
+
   void setUser(User? user) {
     _currentUser = user;
     notifyListeners();
@@ -101,7 +98,9 @@ class PokemonController extends ChangeNotifier {
   Future<void> initializeConnectivity() async {
     await _checkConnectivity();
 
-    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
+    _connectivity.onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
       _checkConnectivity();
     });
   }
@@ -143,7 +142,9 @@ class PokemonController extends ChangeNotifier {
     final favoritedIds = _currentUser!.favoritePokemonIds;
     final loadedIds = _pokemonList.map((p) => p.id).toSet();
 
-    final unloadedFavorites = favoritedIds.where((id) => !loadedIds.contains(id)).toList();
+    final unloadedFavorites = favoritedIds
+        .where((id) => !loadedIds.contains(id))
+        .toList();
 
     if (unloadedFavorites.isEmpty) return;
 
@@ -233,8 +234,10 @@ class PokemonController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response =
-          await _apiService.fetchPokemonList(limit: _pageSize, offset: 0);
+      final response = await _apiService.fetchPokemonList(
+        limit: _pageSize,
+        offset: 0,
+      );
 
       _pokemonList = response.results;
       _hasMore = response.hasMore;
