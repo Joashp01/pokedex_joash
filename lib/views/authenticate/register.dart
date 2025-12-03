@@ -142,6 +142,7 @@ class _RegisterState extends State<Register> {
                                     color: Colors.grey,
                                   ),
                                   onPressed: () {
+
                                     setState(() {
                                       _obscurePassword = !_obscurePassword;
                                     });
@@ -149,9 +150,23 @@ class _RegisterState extends State<Register> {
                                 ),
                               ),
                               obscureText: _obscurePassword,
-                              validator: (value) => value!.length < 6
-                                  ? 'Enter a password 6+ characters'
-                                  : null,
+                              validator: (value) {
+                                //Checks  if the password filed is empty or null
+                                if(value == null || value.isEmpty){
+                                  return 'Enter a Valid Password';
+                                }
+                                // checks the password has at least 6 Character
+                                if(value.length < 6){
+                                  return ' Password must be at least 6 characters long';
+                                }
+                                // verify that the password contains at least one special character
+                                final specialCharRegExp  = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+                                if(!specialCharRegExp.hasMatch(value)){
+                                  return 'Password must contain at least one special character';
+                                }
+                                // if all checks pass, the password is valid
+                                return null;
+                              },
                               onChanged: (val) {
                                 setState(() => password = val);
                               },

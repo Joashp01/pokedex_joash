@@ -150,9 +150,21 @@ class _SignInState extends State<SignIn> {
                                 ),
                               ),
                               obscureText: _obscurePassword,
-                              validator: (value) => value!.isEmpty
-                                  ? 'Enter a password 6+ characters'
-                                  : null,
+                              validator: (value) {
+                                if(value == null || value.isEmpty){
+                                  return 'Enter a Valid Password';
+                                }
+                                if(value.length < 6){
+                                  return ' Password must be at least 6 characters long';
+                                }
+                                final specialCharRegExp  = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+                                if(!specialCharRegExp.hasMatch(value)){
+                                  return 'Password must contain at least one special character';
+                                }
+
+                                return null;
+                              },
+
                               onChanged: (val) {
                                 setState(() => password = val);
                               },
