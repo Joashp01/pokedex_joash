@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // 👈 for kIsWeb
 import 'package:pokedex_joash/services/auth.dart';
@@ -10,34 +12,36 @@ import 'providers/theme_provider.dart';
 import 'services/pokemon_sound.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Load environment variables
+  await dotenv.load(fileName: ".env");
 
   try {
     if (kIsWeb) {
-      // ✅ Web initialization with FirebaseOptions
       await Firebase.initializeApp(
         options: FirebaseOptions(
           apiKey: dotenv.env['API_KEY']!,
           authDomain: dotenv.env['AUTH_DOMAIN']!,
           projectId: dotenv.env['PROJECT_ID']!,
-          storageBucket:  dotenv.env['STORAGE_BUCKET'],
+          storageBucket: dotenv.env['STORAGE_BUCKET']!,
           messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
           appId: dotenv.env['APP_ID']!,
         ),
       );
       debugPrint('Firebase initialized for Web');
     } else {
-      // ✅ Mobile/Desktop initialization (uses google-services.json / plist)
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(); // uses google-services.json / plist
       debugPrint('Firebase initialized for Mobile/Desktop');
     }
-  } catch (e) {
-    debugPrint('Firebase initialization error: $e');
+  } catch (e, s) {
+    debugPrint('Firebase initialization error: $e\n$s');
   }
 
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
