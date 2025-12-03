@@ -8,6 +8,7 @@ import 'package:pokedex_joash/models/user.dart';
 import 'controllers/pokemon_controller.dart';
 import 'providers/theme_provider.dart';
 import 'services/pokemon_sound.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,13 +17,13 @@ void main() async {
     if (kIsWeb) {
       // ✅ Web initialization with FirebaseOptions
       await Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: "AIzaSyDOKhFnqs0BwCTkr_24XkvpH_fBgoawiXU",
-          authDomain: "pokedex-joash.firebaseapp.com",
-          projectId: "pokedex-joash",
-          storageBucket: "pokedex-joash.firebasestorage.app",
-          messagingSenderId: "530976358420",
-          appId: "1:530976358420:web:8bd85adbc19ca718df2701",
+        options: FirebaseOptions(
+          apiKey: dotenv.env['API_KEY']!,
+          authDomain: dotenv.env['AUTH_DOMAIN']!,
+          projectId: dotenv.env['PROJECT_ID']!,
+          storageBucket:  dotenv.env['STORAGE_BUCKET'],
+          messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
+          appId: dotenv.env['APP_ID']!,
         ),
       );
       debugPrint('Firebase initialized for Web');
